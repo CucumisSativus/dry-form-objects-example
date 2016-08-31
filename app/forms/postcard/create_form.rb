@@ -3,10 +3,8 @@ class Postcard
     include Dry::Types.module
     Country = Dry::Types::Definition
                 .new(::Country)
-                .constructor { |country| country }
     CountryState = Dry::Types::Definition
                      .new(::Country::State)
-                     .constructor { |state| state }
   end
 
   class CreateForm < Dry::Types::Struct
