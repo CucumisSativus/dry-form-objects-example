@@ -22,7 +22,7 @@ class Postcard
 
 
     def save!
-      errors = PostcardSchema.(to_hash).messages(full: true)
+      errors = PostcardSchema.call(to_hash).messages(full: true)
       raise CommandValidationFailed, errors if errors.present?
       Postcard.create!(to_hash)
     end
