@@ -44,7 +44,7 @@ class Postcard
       required(:country).filled
 
       rule(country_requires_state: [:country, :state]) do |country, state|
-        country.state_required? > (state.filled?)
+        country.state_required? > state.filled?
       end
     end
   end
