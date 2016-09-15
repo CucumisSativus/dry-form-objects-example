@@ -8,6 +8,8 @@ class Postcard
   end
 
   class CreateForm < Dry::Types::Struct
+    include Dry::Monads::Either::Mixin
+
     constructor_type(:schema)
 
     ZIP_CODE_FORMAT = /\d{5}/
@@ -21,10 +23,12 @@ class Postcard
     attribute :state, Types::CountryState
 
 
-    def save!
+    def save
       errors = PostcardSchema.call(to_hash).messages(full: true)
-      raise CommandValidationFailed, errors if errors.present?
-      Postcard.create!(to_hash)
+      return Left(errors) if errors.present?
+      Right(Postcard.create!(to_hash))
+    rescue ActiveRecord::RecordInvalid => e
+      Left(e.record.errors.full_messages)
     end
 
     private

@@ -60,6 +60,7 @@ GEM
     dry-logic (0.3.0)
       dry-container (~> 0.2, >= 0.2.6)
       dry-equalizer (~> 0.2)
+    dry-matcher (0.5.0)
     dry-monads (0.1.1)
       dry-equalizer
     dry-types (0.8.1)
@@ -200,6 +201,8 @@ PLATFORMS
 DEPENDENCIES
   byebug
   coffee-rails (~> 4.2)
+  dry-matcher
+  dry-monads
   dry-types
   dry-validation
   jbuilder (~> 2.5)

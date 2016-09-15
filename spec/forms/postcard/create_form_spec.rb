@@ -33,8 +33,13 @@ RSpec.describe Postcard::CreateForm do
 
     it 'creates new postcard' do
       expect do
-        described_class.new(form_params).save!
+        described_class.new(form_params).save
       end.to change { Postcard.count }.by(1)
+    end
+
+    it 'returns right' do
+      result = described_class.new(form_params).save
+      expect(result).to be_a(Dry::Monads::Either::Right)
     end
   end
 
@@ -51,8 +56,13 @@ RSpec.describe Postcard::CreateForm do
 
     it 'creates new postcard' do
       expect do
-        described_class.new(form_params).save!
+        described_class.new(form_params).save
       end.to change { Postcard.count }.by(1)
+    end
+
+    it 'returns right' do
+      result = described_class.new(form_params).save
+      expect(result).to be_a(Dry::Monads::Either::Right)
     end
   end
 
@@ -101,10 +111,9 @@ RSpec.describe Postcard::CreateForm do
         }
       end
 
+      subject { described_class.new(form_params).save }
       it 'checks presence of state if country requires state' do
-        expect do
-          described_class.new(form_params).save!
-        end.to raise_error CommandValidationFailed
+        expect(subject).to be_a(Dry::Monads::Either::Left)
       end
     end
 
@@ -120,10 +129,9 @@ RSpec.describe Postcard::CreateForm do
         }
       end
 
+      subject { described_class.new(form_params).save }
       it 'rejects wrong zip code format' do
-        expect do
-          described_class.new(form_params).save!
-        end.to raise_error CommandValidationFailed
+        expect(subject).to be_a(Dry::Monads::Either::Left)
       end
     end
 
@@ -139,17 +147,15 @@ RSpec.describe Postcard::CreateForm do
         }
       end
 
+      subject { described_class.new(form_params).save }
       it 'rejects too small content' do
-        expect do
-          described_class.new(form_params).save!
-        end.to raise_error CommandValidationFailed
+        expect(subject).to be_a(Dry::Monads::Either::Left)
       end
     end
   end
 
   def save_form_without_parameter(parameters, parameter_to_discard)
-    expect do
-      described_class.new(parameters.merge(parameter_to_discard => nil)).save!
-    end.to raise_error CommandValidationFailed
+    result = described_class.new(parameters.merge(parameter_to_discard => nil)).save
+    expect(result).to be_a(Dry::Monads::Either::Left)
   end
 end
