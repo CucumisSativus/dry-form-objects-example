@@ -10,7 +10,7 @@ class Postcard
   class CreateForm < Dry::Types::Struct
     include Dry::Monads::Either::Mixin
 
-    constructor_type(:schema)
+    constructor_type(:symbolized)
 
     ZIP_CODE_FORMAT = /\d{5}/
     MINIMAL_CONTENT_LENGTH = 20
@@ -22,9 +22,8 @@ class Postcard
     attribute :country, Types::Country
     attribute :state, Types::CountryState
 
-
     def save
-      errors = PostcardSchema.call(to_hash).messages(full: true)
+      errors = PostcardSchema.call(to_hash).messages
       return Left(errors) if errors.present?
       Right(Postcard.create!(to_hash))
     rescue ActiveRecord::RecordInvalid => e
