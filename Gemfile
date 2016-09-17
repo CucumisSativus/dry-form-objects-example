@@ -14,6 +14,7 @@ gem 'dry-validation'
 gem 'dry-types'
 gem 'dry-monads'
 gem 'dry-matcher'
+gem 'jsonapi-serializers'
 group :development, :test do
   gem 'byebug', platform: :mri
   gem 'rspec-rails'
