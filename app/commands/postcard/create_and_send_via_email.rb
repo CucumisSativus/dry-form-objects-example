@@ -13,16 +13,10 @@ class Postcard
     attribute :email, Types::Coercible::String
 
     def call
-      Dry::Matcher::EitherMatcher.call(validate) do |m|
-        m.success do |valid_attributes|
-          Postcard::CreateForm.new(valid_attributes).save.fmap do |valid_postcard|
-            PostcardMailer.send_postcard(to_email: email, postcard: valid_postcard).deliver_now
-            valid_postcard
-          end
-        end
-
-        m.failure do |errors|
-          Left(errors)
+      validate.bind do |valid_attributes|
+        Postcard::CreateForm.new(valid_attributes).save.bind do |valid_postcard|
+          PostcardMailer.send_postcard(to_email: email, postcard: valid_postcard).deliver_now
+          Right(valid_postcard)
         end
       end
     end
