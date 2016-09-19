@@ -25,7 +25,8 @@ RSpec.describe 'api user creates new postcard', type: :request do
       city: city,
       zip_code: zip_code,
       content: content,
-      country_id: country_without_states.id
+      country_id: country_without_states.id,
+      email: 'email@example.com'
     }
   end
 
@@ -36,6 +37,12 @@ RSpec.describe 'api user creates new postcard', type: :request do
       expect do
         post api_path, params: request_params, headers: {}, as: :json
       end.to change { Postcard.count }.by(1)
+    end
+
+    it 'sends new postcard' do
+      expect do
+        post api_path, params: request_params, headers: {}, as: :json
+      end.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
 
     it 'has proper json format' do
@@ -62,6 +69,12 @@ RSpec.describe 'api user creates new postcard', type: :request do
       expect do
         post api_path, params: request_params, headers: {}, as: :json
       end.to change { Postcard.count }.by(1)
+    end
+
+    it 'sends new postcard' do
+      expect do
+        post api_path, params: request_params, headers: {}, as: :json
+      end.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
 
     it 'returns proper json format' do
@@ -98,6 +111,10 @@ RSpec.describe 'api user creates new postcard', type: :request do
 
     it 'validates presence of country_id' do
       perform_request_without_require_parameter(api_path, base_params, :country_id)
+    end
+
+    it 'validates presence of email' do
+      perform_request_without_require_parameter(api_path, base_params, :email)
     end
 
     it 'validates presence of state if country requires it' do

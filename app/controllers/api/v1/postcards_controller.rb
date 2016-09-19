@@ -3,7 +3,7 @@ module Api
   module V1
     class PostcardsController < ApiController
       def create
-        result =Postcard::CreateForm.new(postcard_params).save
+        result =Postcard::CreateAndSendViaEmail.new(postcard_params).call
         Dry::Matcher::EitherMatcher.call(result) do |m|
           m.success do |postcard|
             render json: JSONAPI::Serializer.serialize(postcard, namespace: Api::V1), status: :ok
@@ -18,14 +18,7 @@ module Api
       private
 
       def postcard_params
-        {
-          address: params[:address],
-          city: params[:city],
-          zip_code: params[:zip_code],
-          content: params[:content],
-          country: Country.find_by(id: params[:country_id]),
-          state: Country::State.find_by(id: params[:state_id])
-        }
+        params.permit(:address, :city, :zip_code, :content, :country_id, :state_id, :email).to_h
       end
     end
   end
